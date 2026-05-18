@@ -6,7 +6,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl \
     && curl -sL https://aka.ms/InstallAzureCLIDeb | bash \
     && curl -fsSL https://aka.ms/install-azd.sh | bash \
-    && cp /root/.azd/bin/azd /usr/local/bin/azd \
     && curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/local/bin \
     && echo 'eval "$(oh-my-posh init bash)"' >> /etc/bash.bashrc \
     && apt-get clean \
