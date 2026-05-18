@@ -9,10 +9,11 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-azuretools.vscode-azurecli",
-        "ms-azuretools.azd"
+        "ms-azuretools.azd",
+        "eamodio.gitlens"
       ]
     }
   },
-  "postCreateCommand": "python --version && az --version && azd version && oh-my-posh version",
+  "postCreateCommand": "python --version && az --version && azd version && oh-my-posh version && (command -v npx >/dev/null && npx --yes skills add microsoft/skills --all || echo 'Skipping skills install: npx not available')",
   "remoteUser": "vscode"
 }
