@@ -56,10 +56,7 @@ In any other repository, drop in a minimal `.devcontainer/devcontainer.json` —
 
 ### First-time setup
 
-1. The image is published as **private** by default. After the first successful workflow run, open <https://github.com/users/duongthaiha/packages/container/python-azure-devcontainer/settings> and either:
-   - set the package visibility to **Public** (anyone can pull), or
-   - keep it private and grant read access to the consuming repos / users.
-2. Consuming repos that pull a private image must `docker login ghcr.io` locally (or in CI use a PAT / `GITHUB_TOKEN` with `read:packages`).
+The image is published as **public** (because this repository is public), so consumers can pull it without authentication. If you ever flip the repo back to private, also flip the package back to private at <https://github.com/users/duongthaiha/packages/container/python-azure-devcontainer/settings>, and consumers will need `docker login ghcr.io`.
 
 ### Notes
 
