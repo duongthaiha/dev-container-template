@@ -1,0 +1,17 @@
+{
+  "name": "Python Azure",
+  "image": "ghcr.io/duongthaiha/python-azure-devcontainer:${templateOption:imageTag}",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-azurecli",
+        "ms-azuretools.azd",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+  "postCreateCommand": "command -v npx >/dev/null && npx --yes skills add microsoft/skills --all || echo 'Skipping skills install: npx not available'",
+  "remoteUser": "vscode"
+}

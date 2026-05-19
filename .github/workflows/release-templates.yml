@@ -1,0 +1,29 @@
+name: Release dev container templates
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - '.github/workflows/release-templates.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish templates to GHCR
+        uses: devcontainers/action@v1
+        with:
+          publish-templates: 'true'
+          base-path-to-templates: './src'
+          generate-docs: 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

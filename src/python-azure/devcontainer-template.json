@@ -1,0 +1,19 @@
+{
+  "id": "python-azure",
+  "version": "1.0.0",
+  "name": "Python + Azure (prebuilt)",
+  "description": "Python dev container with Azure CLI, Azure Developer CLI (azd), Oh My Posh, and Microsoft skills. Uses a prebuilt multi-arch image from GHCR — no local build required.",
+  "documentationURL": "https://github.com/duongthaiha/dev-container-template",
+  "licenseURL": "https://github.com/duongthaiha/dev-container-template/blob/main/LICENSE",
+  "options": {
+    "imageTag": {
+      "type": "string",
+      "description": "Tag of the prebuilt image to use",
+      "proposals": ["latest"],
+      "default": "latest"
+    }
+  },
+  "platforms": ["Python"],
+  "publisher": "duongthaiha",
+  "keywords": ["python", "azure", "azd", "azure-cli"]
+}
