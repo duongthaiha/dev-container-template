@@ -28,3 +28,9 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install the `gh copilot` extension (gh-copilot) for the `vscode` user.
+# Extensions are per-user, so this MUST run as the non-root user.
+USER vscode
+RUN gh extension install github/gh-copilot
+USER root
+
