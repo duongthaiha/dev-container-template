@@ -17,8 +17,10 @@ Once your container starts, the following tooling is preinstalled and on `PATH`:
 | Python | `python --version` | 3.12 on Debian Bookworm |
 | Azure CLI | `az --version` | Latest from `aka.ms/InstallAzureCLIDeb` |
 | Azure Developer CLI | `azd version` | Latest from `aka.ms/install-azd.sh` |
+| GitHub CLI | `gh --version` | Authenticate with `gh auth login` |
+| GitHub Copilot CLI | `copilot --help` | Standalone agent — `@github/copilot` on npm. Authenticate with `copilot` and follow the device flow on first run. Requires a Copilot subscription. |
+| Node.js | `node -v` / `npm -v` | Node.js **22** from NodeSource (required by Copilot CLI) |
 | Oh My Posh | `oh-my-posh version` | Enabled globally for Bash |
-| Node.js + npm | `node -v` / `npm -v` | For `npx` and skills |
 | Microsoft Skills pack | `ls .github/skills` | Installed per-workspace via `npx skills add microsoft/skills` |
 
 User inside the container: **`vscode`** (non-root, passwordless `sudo`).
@@ -68,6 +70,8 @@ Then in VS Code:
    python --version
    az --version
    azd version
+   gh --version
+   copilot --version
    oh-my-posh version
    ```
 
