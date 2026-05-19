@@ -26,71 +26,32 @@ Skeleton repository for a Python development container with Azure tooling preins
 
 ## Reusing this dev container in other repositories
 
-Every push to `main` that touches `.devcontainer/**` builds and publishes the image to GitHub Container Registry via [`.github/workflows/publish-devcontainer.yml`](.github/workflows/publish-devcontainer.yml):
+**See [USAGE.md](USAGE.md) for the full consumer guide** — covers copy-paste setup, the `devcontainer templates apply` CLI flow, version pinning, customization, Codespaces, and troubleshooting.
 
-```
-ghcr.io/duongthaiha/python-azure-devcontainer:latest
-```
-
-In any other repository, drop in a minimal `.devcontainer/devcontainer.json` — no Dockerfile required:
+TL;DR — drop this into `.devcontainer/devcontainer.json` in any other repo and run *Dev Containers: Reopen in Container*:
 
 ```jsonc
 {
   "name": "Python Azure",
   "image": "ghcr.io/duongthaiha/python-azure-devcontainer:latest",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-azuretools.vscode-azurecli",
-        "ms-azuretools.azd",
-        "eamodio.gitlens"
-      ]
-    }
-  },
-  "postCreateCommand": "command -v npx >/dev/null && npx --yes skills add microsoft/skills --all || echo 'Skipping skills install: npx not available'",
   "remoteUser": "vscode"
 }
 ```
 
-### First-time setup
+The image is public (multi-arch: `linux/amd64` + `linux/arm64`), so no `docker login` is needed.
 
-The image is published as **public** (because this repository is public), so consumers can pull it without authentication. If you ever flip the repo back to private, also flip the package back to private at <https://github.com/users/duongthaiha/packages/container/python-azure-devcontainer/settings>, and consumers will need `docker login ghcr.io`.
+## Publishing pipeline (maintainers)
 
-### Notes
+This repository hosts two GitHub Actions workflows that ship the artifacts consumers depend on:
 
-- The image is built for **linux/amd64** and **linux/arm64**, so it runs natively on Intel/AMD Linux & Windows hosts and on Apple Silicon Macs (M1/M2/M3/M4).
-- Every build is also tagged with the commit SHA, so consumers can pin a specific version:
+| Workflow | Trigger | What it publishes |
+|---|---|---|
+| [`.github/workflows/publish-devcontainer.yml`](.github/workflows/publish-devcontainer.yml) | Push to `main` touching `.devcontainer/**` | Multi-arch image `ghcr.io/duongthaiha/python-azure-devcontainer:{latest, <sha>}`. Native builds on `ubuntu-latest` + `ubuntu-24.04-arm` in parallel, merged into one manifest. |
+| [`.github/workflows/release-templates.yml`](.github/workflows/release-templates.yml) | Push to `main` touching `src/**` | Dev Container Template OCI artifact `ghcr.io/duongthaiha/dev-container-template/python-azure:latest`. |
 
-  ```jsonc
-  "image": "ghcr.io/duongthaiha/python-azure-devcontainer:<commit-sha>"
-  ```
+Every successful image build is tagged with both `:latest` and the commit SHA, so consumers can pin to a specific version. Browse all published versions at the [package page](https://github.com/duongthaiha/dev-container-template/pkgs/container/python-azure-devcontainer).
 
-## Using this as a Dev Container Template (VS Code picker)
+### Getting the template into VS Code's built-in picker
 
-In addition to the raw prebuilt image, this repo publishes a [Dev Container Template](https://containers.dev/implementors/templates/) to GHCR via [`.github/workflows/release-templates.yml`](.github/workflows/release-templates.yml). The template source lives under [`src/python-azure/`](src/python-azure/) and is published as:
+VS Code's **Add Dev Container Configuration Files…** picker only lists templates from the curated public index at <https://containers.dev/templates>. To get this template into that dropdown for everyone, open a PR adding it to the [`devcontainers/templates`](https://github.com/devcontainers/templates) collection index — once merged it appears automatically in every user's VS Code with no local configuration. Until then, consumers use the `devcontainer templates apply` CLI command (see [USAGE.md](USAGE.md#option-b--apply-via-the-devcontainer-cli)).
 
-```
-ghcr.io/duongthaiha/dev-container-template/python-azure:latest
-```
-
-### Apply it to any folder
-
-Easiest, no UI required — install the [devcontainer CLI](https://github.com/devcontainers/cli) once and run:
-
-```bash
-npm install -g @devcontainers/cli
-
-devcontainer templates apply \
-  --template-id ghcr.io/duongthaiha/dev-container-template/python-azure:latest \
-  --workspace-folder .
-```
-
-This drops a minimal `.devcontainer/devcontainer.json` (pointing at the prebuilt image) into the target repo. Then run **Dev Containers: Reopen in Container**.
-
-### Showing up in VS Code's "Add Dev Container Configuration Files…" picker
-
-VS Code's built-in picker only lists templates from the **curated public index** at <https://containers.dev/templates>. To get this template into that dropdown for everyone, open a PR adding it to the [`devcontainers/templates`](https://github.com/devcontainers/templates) collection index — once merged it appears automatically in every user's VS Code without any local configuration.
-
-Until then, the template is fully usable via the CLI command above.
