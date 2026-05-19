@@ -8,6 +8,7 @@ Skeleton repository for a Python development container with Azure tooling preins
 - Azure CLI (`az`)
 - Azure Developer CLI (`azd`)
 - Oh My Posh (`oh-my-posh`) with global Bash initialization
+- Microsoft Skills pack (`microsoft/skills`) installed via `npx skills add microsoft/skills`
 
 ## Usage
 
@@ -20,4 +21,5 @@ Skeleton repository for a Python development container with Azure tooling preins
    az --version
    azd version
    oh-my-posh version
+   ls -la .github/skills
    ```
