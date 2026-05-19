@@ -7,9 +7,8 @@ Skeleton repository for a Python development container with Azure tooling preins
 - Python (via `mcr.microsoft.com/devcontainers/python`)
 - Azure CLI (`az`)
 - Azure Developer CLI (`azd`)
-- GitHub CLI (`gh`)
+- GitHub CLI (`gh`, with built-in `gh copilot suggest` / `gh copilot explain`)
 - GitHub Copilot CLI (`copilot`, via `@github/copilot`)
-- `gh copilot` extension (`gh copilot suggest` / `gh copilot explain`)
 - Node.js 22 (`node`, `npm`, `npx`) from NodeSource
 - Oh My Posh (`oh-my-posh`) with global Bash initialization
 - Microsoft Skills pack (`microsoft/skills`) installed via `npx skills add microsoft/skills`

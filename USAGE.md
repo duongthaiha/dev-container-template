@@ -17,9 +17,8 @@ Once your container starts, the following tooling is preinstalled and on `PATH`:
 | Python | `python --version` | 3.12 on Debian Bookworm |
 | Azure CLI | `az --version` | Latest from `aka.ms/InstallAzureCLIDeb` |
 | Azure Developer CLI | `azd version` | Latest from `aka.ms/install-azd.sh` |
-| GitHub CLI | `gh --version` | Authenticate with `gh auth login` |
+| GitHub CLI | `gh --version` | Authenticate with `gh auth login`. Includes the built-in `gh copilot suggest` / `gh copilot explain` subcommands. |
 | GitHub Copilot CLI | `copilot --help` | Standalone agent — `@github/copilot` on npm. Authenticate with `copilot` and follow the device flow on first run. Requires a Copilot subscription. |
-| `gh copilot` extension | `gh copilot suggest` / `gh copilot explain` | Inline shell-command suggestions and explanations. Uses `gh`'s auth, so `gh auth login` is enough. |
 | Node.js | `node -v` / `npm -v` | Node.js **22** from NodeSource (required by Copilot CLI) |
 | Oh My Posh | `oh-my-posh version` | Enabled globally for Bash |
 | Microsoft Skills pack | `ls .github/skills` | Installed per-workspace via `npx skills add microsoft/skills` |
