@@ -14,6 +14,6 @@
       ]
     }
   },
-  "postCreateCommand": "python --version && az --version && azd version && oh-my-posh version && (command -v npx >/dev/null && npx --yes skills add microsoft/skills --all || echo 'Skipping skills install: npx not available')",
+  "postCreateCommand": "python --version && az --version && azd version && bicep --version && oh-my-posh version && (command -v npx >/dev/null && npx --yes skills add microsoft/skills --all || echo 'Skipping skills install: npx not available')",
   "remoteUser": "vscode"
 }
