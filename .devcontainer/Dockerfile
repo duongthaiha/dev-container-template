@@ -7,8 +7,11 @@ RUN apt-get update \
     # Azure CLI
     && curl -sL https://aka.ms/InstallAzureCLIDeb | bash \
     # Bicep CLI
-    && az bicep install \
-    && ln -sf /root/.azure/bin/bicep /usr/local/bin/bicep \
+    && arch="$(dpkg --print-architecture)" \
+    && case "$arch" in amd64) bicep_arch=x64 ;; arm64) bicep_arch=arm64 ;; *) echo "Unsupported architecture: $arch" && exit 1 ;; esac \
+    && curl -fsSL "https://github.com/Azure/bicep/releases/latest/download/bicep-linux-${bicep_arch}" \
+        -o /usr/local/bin/bicep \
+    && chmod +x /usr/local/bin/bicep \
     # Azure Developer CLI
     && curl -fsSL https://aka.ms/install-azd.sh | bash \
     # Oh My Posh

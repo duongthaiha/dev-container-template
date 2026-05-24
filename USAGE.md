@@ -17,7 +17,7 @@ Once your container starts, the following tooling is preinstalled and on `PATH`:
 | Python | `python --version` | 3.12 on Debian Bookworm |
 | Azure CLI | `az --version` | Latest from `aka.ms/InstallAzureCLIDeb` |
 | Azure Developer CLI | `azd version` | Latest from `aka.ms/install-azd.sh` |
-| Bicep CLI | `bicep --version` | Installed via `az bicep install` during image build |
+| Bicep CLI | `bicep --version` | Installed from the latest GitHub release during image build |
 | GitHub CLI | `gh --version` | Authenticate with `gh auth login`. Includes the built-in `gh copilot suggest` / `gh copilot explain` subcommands. |
 | GitHub Copilot CLI | `copilot --help` | Standalone agent — `@github/copilot` on npm. Authenticate with `copilot` and follow the device flow on first run. Requires a Copilot subscription. |
 | Node.js | `node -v` / `npm -v` | Node.js **22** from NodeSource (required by Copilot CLI) |
