@@ -6,6 +6,8 @@ on:
     paths:
       - '.devcontainer/**'
       - '.github/workflows/publish-devcontainer.yml'
+  schedule:
+    - cron: '0 6 * * 1'
   workflow_dispatch:
 
 permissions:
@@ -53,6 +55,8 @@ jobs:
           context: .devcontainer
           file: .devcontainer/Dockerfile
           platforms: ${{ matrix.platform }}
+          pull: true
+          no-cache: ${{ github.event_name == 'schedule' }}
           outputs: type=image,name=${{ steps.img.outputs.name }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=${{ matrix.arch }}
           cache-to: type=gha,scope=${{ matrix.arch }},mode=max
