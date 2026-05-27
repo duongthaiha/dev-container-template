@@ -33,3 +33,23 @@ RUN apt-get update \
     && npm install -g @github/copilot \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Pre-bake the Microsoft Skills pack into the image so consumers get skills
+# instantly on container start with no network dependency. The skills CLI
+# writes `.agents/skills/` (universal format, recognized by Copilot CLI,
+# Claude Code, Cursor, Codex, etc.) into the cwd; we stage that under
+# /opt/microsoft-skills/ and copy from there in postCreateCommand.
+# Refreshed on every weekly scheduled rebuild (workflow runs with no-cache).
+#
+# Two passes:
+#   1. `--all` pulls every top-level skill from `microsoft/skills`.
+#   2. `--full-depth --skill microsoft-foundry` pulls the Microsoft Foundry
+#      plugin's orchestrator skill (it lives under `.github/plugins/microsoft-foundry/`,
+#      which the default scan does NOT traverse — `--full-depth` is required).
+#      See: https://microsoft.github.io/skills/#plugin=microsoft-foundry
+RUN mkdir -p /opt/microsoft-skills \
+    && cd /opt/microsoft-skills \
+    && npx --yes skills add microsoft/skills --all \
+    && npx --yes skills add microsoft/skills --full-depth --skill microsoft-foundry --agent '*' -y \
+    && chown -R vscode:vscode /opt/microsoft-skills \
+    && rm -rf /root/.npm
