@@ -12,6 +12,6 @@
       ]
     }
   },
-  "postCreateCommand": "mkdir -p .agents/skills && (cp -rn /opt/microsoft-skills/.agents/skills/. .agents/skills/ 2>/dev/null && echo 'Skills synced from baked image cache' || echo 'No baked skills found at /opt/microsoft-skills')",
+  "postCreateCommand": "echo \"Microsoft Skills available: $(ls ~/.copilot/skills 2>/dev/null | wc -l) under ~/.copilot/skills/\"",
   "remoteUser": "vscode"
 }

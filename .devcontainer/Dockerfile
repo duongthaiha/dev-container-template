@@ -34,22 +34,32 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Pre-bake the Microsoft Skills pack into the image so consumers get skills
-# instantly on container start with no network dependency. The skills CLI
-# writes `.agents/skills/` (universal format, recognized by Copilot CLI,
-# Claude Code, Cursor, Codex, etc.) into the cwd; we stage that under
-# /opt/microsoft-skills/ and copy from there in postCreateCommand.
+# Pre-bake the Microsoft Skills pack into the image at the GitHub Copilot CLI
+# personal-skills path (`$HOME/.copilot/skills/`) so every consumer of this
+# image gets the full skill set automatically — regardless of what
+# postCreateCommand or workspace .agents/skills/ layout their repo uses.
+# This path is auto-discovered by Copilot CLI in any workspace, with no
+# need for consumers to update their own devcontainer.json.
 # Refreshed on every weekly scheduled rebuild (workflow runs with no-cache).
 #
-# Two passes:
+# Two install passes (run as the vscode user so HOME resolves correctly):
 #   1. `--all` pulls every top-level skill from `microsoft/skills`.
 #   2. `--full-depth --skill microsoft-foundry` pulls the Microsoft Foundry
-#      plugin's orchestrator skill (it lives under `.github/plugins/microsoft-foundry/`,
-#      which the default scan does NOT traverse — `--full-depth` is required).
+#      plugin's orchestrator skill (it lives under
+#      `.github/plugins/microsoft-foundry/`, which the default scan does NOT
+#      traverse — `--full-depth` is required).
 #      See: https://microsoft.github.io/skills/#plugin=microsoft-foundry
-RUN mkdir -p /opt/microsoft-skills \
-    && cd /opt/microsoft-skills \
-    && npx --yes skills add microsoft/skills --all \
-    && npx --yes skills add microsoft/skills --full-depth --skill microsoft-foundry --agent '*' -y \
-    && chown -R vscode:vscode /opt/microsoft-skills \
-    && rm -rf /root/.npm
+#
+# The skills CLI writes to `<cwd>/.agents/skills/` (universal format). We run
+# the install in a scratch dir, then move the tree under
+# `/home/vscode/.copilot/skills/` (Copilot CLI personal skills location).
+RUN su vscode -c '\
+        set -eux \
+        && mkdir -p /tmp/skills-install \
+        && cd /tmp/skills-install \
+        && npx --yes skills add microsoft/skills --all \
+        && npx --yes skills add microsoft/skills --full-depth --skill microsoft-foundry --agent "*" -y \
+        && mkdir -p /home/vscode/.copilot/skills \
+        && cp -r /tmp/skills-install/.agents/skills/. /home/vscode/.copilot/skills/ \
+        && rm -rf /tmp/skills-install /home/vscode/.npm \
+    '

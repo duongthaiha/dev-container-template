@@ -22,7 +22,7 @@ Once your container starts, the following tooling is preinstalled and on `PATH`:
 | GitHub Copilot CLI | `copilot --help` | Standalone agent — `@github/copilot` on npm. Authenticate with `copilot` and follow the device flow on first run. Requires a Copilot subscription. |
 | Node.js | `node -v` / `npm -v` | Node.js **22** from NodeSource (required by Copilot CLI) |
 | Oh My Posh | `oh-my-posh version` | Enabled globally for Bash |
-| Microsoft Skills pack | `ls .agents/skills` | **Baked into the image** at `/opt/microsoft-skills/` and synced to the workspace's `.agents/skills/` by `postCreateCommand` — no network needed at container start. Includes every top-level skill from `microsoft/skills` **plus the [`microsoft-foundry`](https://microsoft.github.io/skills/#plugin=microsoft-foundry) plugin** (Foundry router + 10 sub-skills). Refreshed every Monday by the publish workflow. |
+| Microsoft Skills pack | `ls ~/.copilot/skills` | **Baked into the image** at `/home/vscode/.copilot/skills/` (Copilot CLI's personal-skills path) — discovered automatically in any workspace, no network at container start, no consumer `postCreateCommand` changes required. Includes every top-level skill from `microsoft/skills` **plus the [`microsoft-foundry`](https://microsoft.github.io/skills/#plugin=microsoft-foundry) plugin** (Foundry router + 10 sub-skills). Refreshed every Monday by the publish workflow. |
 
 User inside the container: **`vscode`** (non-root, passwordless `sudo`).
 
@@ -55,7 +55,7 @@ In the **target repository**, create the file `.devcontainer/devcontainer.json` 
       ]
     }
   },
-  "postCreateCommand": "mkdir -p .agents/skills && cp -rn /opt/microsoft-skills/.agents/skills/. .agents/skills/ 2>/dev/null || true",
+  "postCreateCommand": "echo \"Microsoft Skills available: $(ls ~/.copilot/skills 2>/dev/null | wc -l)\"",
   "remoteUser": "vscode"
 }
 ```
@@ -136,10 +136,10 @@ The image is the *base*. Anything you add in your own `devcontainer.json` layers
 "postCreateCommand": "pip install -r requirements.txt"
 ```
 
-Or combine with the skills sync:
+Or combine with your own setup (skills are already available at `~/.copilot/skills/`, no sync needed):
 
 ```jsonc
-"postCreateCommand": "pip install -r requirements.txt && mkdir -p .agents/skills && cp -rn /opt/microsoft-skills/.agents/skills/. .agents/skills/ 2>/dev/null || true"
+"postCreateCommand": "pip install -r requirements.txt"
 ```
 
 ### Forward ports
@@ -204,7 +204,7 @@ If your repo is **private**, ensure the GHCR package is also reachable: this ima
 | Symptom | Fix |
 |---|---|
 | `pull access denied` or `unauthorized` | The image is public; check Docker is logged out of stale credentials: `docker logout ghcr.io`. |
-| Container build hangs on skills install layer | The Dockerfile runs `npx skills add microsoft/skills --all` at build time to bake skills into `/opt/microsoft-skills/`. If the build runner has no outbound HTTPS or a flaky npm registry, this layer will hang or fail. The weekly scheduled rebuild reruns this with `no-cache`, so transient failures self-heal on the next Monday run. |
+| Container build hangs on skills install layer | The Dockerfile runs `npx skills add microsoft/skills --all` at build time to bake skills into `~/.copilot/skills/`. If the build runner has no outbound HTTPS or a flaky npm registry, this layer will hang or fail. The weekly scheduled rebuild reruns this with `no-cache`, so transient failures self-heal on the next Monday run. |
 | Container build hangs on `postCreateCommand` | Skills are now baked into the image and `postCreateCommand` only does a local `cp` — it should never hit the network. If it hangs, check the `python --version`/`az --version` smoke-test chain. |
 | Wrong architecture / slow on Apple Silicon | Verify with `docker image inspect ghcr.io/duongthaiha/python-azure-devcontainer:latest --format '{{.Architecture}}'`. It should match `arm64` on M-series Macs. If not, `docker pull --platform linux/arm64 ghcr.io/duongthaiha/python-azure-devcontainer:latest` and rebuild. |
 | Extensions not installing | Check the **Dev Containers** log: View → Output → "Dev Containers". Extensions install **after** container start. |

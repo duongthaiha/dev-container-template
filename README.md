@@ -12,7 +12,7 @@ Skeleton repository for a Python development container with Azure tooling preins
 - GitHub Copilot CLI (`copilot`, via `@github/copilot`)
 - Node.js 22 (`node`, `npm`, `npx`) from NodeSource
 - Oh My Posh (`oh-my-posh`) with global Bash initialization
-- Microsoft Skills pack (`microsoft/skills`) — every top-level skill plus the **Microsoft Foundry plugin** (`microsoft-foundry`) — baked into the image at `/opt/microsoft-skills/` and synced into the workspace's `.agents/skills/` on container start
+- Microsoft Skills pack (`microsoft/skills`) — every top-level skill plus the **Microsoft Foundry plugin** (`microsoft-foundry`) — baked into the image at `~/.copilot/skills/` so Copilot CLI discovers them in any workspace with no extra setup
 
 ## Usage
 
@@ -28,7 +28,7 @@ Skeleton repository for a Python development container with Azure tooling preins
    gh --version
    copilot --version
    oh-my-posh version
-   ls -la .agents/skills
+   ls -la ~/.copilot/skills
    ```
 
 ## Reusing this dev container in other repositories

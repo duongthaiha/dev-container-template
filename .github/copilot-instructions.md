@@ -28,15 +28,15 @@ If you add a tool, add it to **all three** of: `.devcontainer/Dockerfile`, the v
 
 ## Skills (baked into the image)
 
-- The Microsoft Skills pack is **pre-installed into the image at build time** by a dedicated `RUN` step in `.devcontainer/Dockerfile` that runs two passes inside `/opt/microsoft-skills/`:
+- The Microsoft Skills pack is **pre-installed into the image at build time** by a dedicated `RUN` step in `.devcontainer/Dockerfile` that runs (as the `vscode` user) two passes in a scratch dir, then relocates the tree to `/home/vscode/.copilot/skills/`:
   1. `npx --yes skills add microsoft/skills --all` — every top-level skill in `microsoft/skills` (`.github/skills/*`).
   2. `npx --yes skills add microsoft/skills --full-depth --skill microsoft-foundry --agent '*' -y` — the [Microsoft Foundry plugin](https://microsoft.github.io/skills/#plugin=microsoft-foundry) (orchestrator + 10 sub-skills). The default scan does **not** traverse `.github/plugins/<plugin>/skills/`, so `--full-depth` is required to surface plugin skills.
-- The `skills` CLI installs in **universal format** to `.agents/skills/<skill>/` (recognized by Copilot CLI, Claude Code, Cursor, Codex, and 12 other agents). It does **not** populate `.github/skills/` — do not "fix" code that refers to `.agents/skills/`.
-- On container start, both `postCreateCommand`s (in `.devcontainer/devcontainer.json` and `src/python-azure/.devcontainer/devcontainer.json`) sync the baked tree into the consumer workspace with `mkdir -p .agents/skills && cp -rn /opt/microsoft-skills/.agents/skills/. .agents/skills/`. `-n` (no-clobber) is deliberate so a consumer's hand-customized skill is never overwritten.
+- The install location is **deliberately `~/.copilot/skills/` (Copilot CLI's personal-skills path)**, not a workspace-relative path. Copilot CLI auto-discovers personal skills in any workspace, so every consumer of this image gets all skills with **zero changes** to their own `devcontainer.json` / `postCreateCommand`. An earlier design that staged skills under `/opt/microsoft-skills/` and relied on `cp -rn` in `postCreateCommand` was abandoned because consumer repos with their own `devcontainer.json` would never run that copy.
+- The `skills` CLI installs in **universal format** under `.agents/skills/<skill>/` in the install cwd; the Dockerfile moves that tree into `~/.copilot/skills/<skill>/`. The universal format is recognized by Copilot CLI, Claude Code, Cursor, Codex, and 12 other agents.
 - The weekly Monday cron in `publish-devcontainer.yml` runs with `no-cache: true` and `pull: true`, so the skills `RUN` is re-executed and picks up the latest `microsoft/skills` content automatically — do not add caching that would defeat this.
-- `skills-lock.json` at the repo root records `.github/skills/...` paths from an older skills-CLI layout — it is stale relative to the current `.agents/skills/` checkout. It is managed by the `skills` CLI; do not hand-edit. Consumers get their own lockfile when skills are synced into their workspace.
-- The skills source-of-truth checkout for *this* repo lives at `.agents/skills/<skill-name>/` (each contains a `SKILL.md`).
-- To add another plugin skill (e.g. `foundry-models`, `foundry-hosted-agents`), append a pass: `&& npx --yes skills add microsoft/skills --full-depth --skill <skill-name> --agent '*' -y`. To add a different skill source, use a separate `npx skills add <org>/<repo> --all`. Do **not** move these into `postCreateCommand` — that would re-introduce the network-at-startup dependency we removed.
+- `skills-lock.json` at the repo root records `.github/skills/...` paths from an older skills-CLI layout — it is stale relative to the current `.agents/skills/` checkout used for *this repo's own* development. It is managed by the `skills` CLI; do not hand-edit.
+- The skills source-of-truth checkout for *this* repo (for editing/testing) lives at `.agents/skills/<skill-name>/` (each contains a `SKILL.md`). That is unrelated to the in-image bake — consumers do not need it.
+- To add another plugin skill (e.g. `foundry-models`, `foundry-hosted-agents`), append a pass inside the same `RUN` (still under `su vscode -c '...'`): `&& npx --yes skills add microsoft/skills --full-depth --skill <skill-name> --agent "*" -y`. To add a different skill source, use a separate `npx skills add <org>/<repo> --all`. Do **not** move these into `postCreateCommand` — that would re-introduce the network-at-startup dependency we removed AND fail for consumers who keep their own `postCreateCommand`.
 - Note: the `microsoft-foundry` plugin's full experience also expects three MCP servers (Azure MCP, Foundry MCP, Microsoft Docs MCP). The skill *files* are baked into the image; the MCP servers themselves are configured per-agent at runtime (e.g. via `copilot`'s `/mcp` or `/plugin install microsoft-foundry@skills`) and are **not** auto-wired by this image.
 
 ## Consumer-facing contract (do not break)
@@ -58,7 +58,7 @@ There are no unit tests, linters, or build scripts in this repo. Validation is d
 - Opening the repo in VS Code → **Dev Containers: Reopen in Container** and running the verification block from `README.md`:
   ```bash
   python --version && az --version && azd version && bicep --version \
-    && gh --version && copilot --version && oh-my-posh version && ls -la .github/skills
+    && gh --version && copilot --version && oh-my-posh version && ls -la ~/.copilot/skills
   ```
 - The publish workflow's matrix build is the de facto CI — if `docker build` fails on either `linux/amd64` or `linux/arm64`, the merged manifest is not pushed.
 
