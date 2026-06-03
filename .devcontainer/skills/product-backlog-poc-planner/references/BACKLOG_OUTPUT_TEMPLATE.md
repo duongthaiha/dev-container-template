@@ -24,6 +24,8 @@ One paragraph that explains the thin slice. Keep it outcome-first: user, workflo
 
 ## Required Epic Set
 
+Sequenced so the dev team can deploy and test incrementally: environment first, then data, then application code.
+
 ### 1. Product Discovery and Scope
 
 Purpose: turn the idea into a testable POC boundary.
@@ -34,39 +36,9 @@ Expected stories:
 - Identify primary users and top workflows.
 - Confirm demo scenario and stakeholder signoff.
 
-### 2. User Experience and Workflow
+### 2. Azure Infrastructure and Deployment
 
-Purpose: define what the user sees, does, approves, and trusts.
-
-Expected stories:
-
-- Map the current workflow and future POC workflow.
-- Define conversation, UI, API, or autonomous behavior.
-- Define human approval and exception paths.
-
-### 3. Application/API Implementation
-
-Purpose: implement the core product behavior.
-
-Expected stories:
-
-- Implement the minimum end-to-end user journey.
-- Add orchestration, agent, or tool-calling behavior only where the scenario needs it.
-- Capture failure states and user-facing recovery behavior.
-
-### 4. Data and Integration
-
-Purpose: connect the POC to real enough data without pretending the integration problem is solved.
-
-Expected stories:
-
-- Identify data sources and data contracts.
-- Implement read paths and any required write/action paths.
-- Add test data and data refresh expectations.
-
-### 5. Azure Infrastructure and Deployment
-
-Purpose: make the POC repeatable, not hand-built.
+Purpose: make the POC repeatable, not hand-built. Stand up the environment early so every subsequent epic can deploy and validate incrementally.
 
 Expected stories:
 
@@ -75,9 +47,9 @@ Expected stories:
 - Support `azd provision`, `azd deploy`, and `azd up`.
 - Document required environment variables and secret locations.
 
-### 6. Private Networking and Security
+### 3. Private Networking and Security
 
-Purpose: keep the database behind the right doors from the first sprint.
+Purpose: keep the database behind the right doors from the first sprint. Wire up networking and identity before data flows through the system.
 
 Expected stories:
 
@@ -85,6 +57,36 @@ Expected stories:
 - Add private endpoint and private DNS requirements for the selected database.
 - Disable public network access where supported by the selected database service.
 - Add managed identity and RBAC stories for service-to-service access.
+
+### 4. Data and Integration
+
+Purpose: connect the POC to real enough data without pretending the integration problem is solved. Runs against live infra from Epic 2–3.
+
+Expected stories:
+
+- Identify data sources and data contracts.
+- Implement read paths and any required write/action paths.
+- Add test data and data refresh expectations.
+
+### 5. User Experience and Workflow
+
+Purpose: define what the user sees, does, approves, and trusts. Finalize UX design before application implementation begins.
+
+Expected stories:
+
+- Map the current workflow and future POC workflow.
+- Define conversation, UI, API, or autonomous behavior.
+- Define human approval and exception paths.
+
+### 6. Application/API Implementation
+
+Purpose: implement the core product behavior on top of the infrastructure, data, and UX foundations from Epics 2–5.
+
+Expected stories:
+
+- Implement the minimum end-to-end user journey.
+- Add orchestration, agent, or tool-calling behavior only where the scenario needs it.
+- Capture failure states and user-facing recovery behavior.
 
 ### 7. Observability and Validation
 
@@ -108,19 +110,9 @@ Expected stories:
 - Verify each POC success criterion against the deployed system, not a local build.
 - Validate private connectivity from the deployed host, not a developer machine.
 
-### 9. POC Demo Script and Guide
+### 9. Documentation of Architecture Decisions, Workflow Diagrams, and Operational Runbooks
 
-Purpose: make the POC demonstrable on demand by any presenter.
-
-Expected stories:
-
-- Prepare a step-by-step demo script driving the primary user workflow.
-- Document demo prerequisites, environment setup, and required fixtures.
-- Capture expected outputs so a presenter can spot a broken demo.
-
-### 10. Documentation of Architecture Decisions, Workflow Diagrams, and Operational Runbooks
-
-Purpose: make the POC buildable by the next team and operable in production-shaped form.
+Purpose: make the POC buildable by the next team and operable in production-shaped form. Capture decisions while they are fresh, before demo preparation.
 
 Expected stories:
 
@@ -129,6 +121,16 @@ Expected stories:
 - Write an operational runbook (deploy, rotate secrets, redeploy, teardown).
 - Document what must change before production.
 - Any lesson learnt from fixing issue during deployment and testing.
+
+### 10. POC Demo Script and Guide
+
+Purpose: make the POC demonstrable on demand by any presenter. Final epic — everything it references is already built and documented.
+
+Expected stories:
+
+- Prepare a step-by-step demo script driving the primary user workflow.
+- Document demo prerequisites, environment setup, and required fixtures.
+- Capture expected outputs so a presenter can spot a broken demo.
 
 
 
