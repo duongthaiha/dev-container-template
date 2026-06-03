@@ -42,13 +42,12 @@ RUN apt-get update \
 # need for consumers to update their own devcontainer.json.
 # Refreshed on every weekly scheduled rebuild (workflow runs with no-cache).
 #
-# Two install passes (run as the vscode user so HOME resolves correctly):
-#   1. `--all` pulls every top-level skill from `microsoft/skills`.
-#   2. `--full-depth --skill microsoft-foundry` pulls the Microsoft Foundry
-#      plugin's orchestrator skill (it lives under
-#      `.github/plugins/microsoft-foundry/`, which the default scan does NOT
-#      traverse — `--full-depth` is required).
-#      See: https://microsoft.github.io/skills/#plugin=microsoft-foundry
+# A single `--full-depth --all` pass (run as the vscode user so HOME resolves
+# correctly) installs every skill from `microsoft/skills`, including plugin
+# skills that live under `.github/plugins/*/skills/` (e.g. microsoft-foundry,
+# azure-deploy, azure-prepare, etc.).  Without `--full-depth` only the 19
+# top-level skills under `.github/skills/` are discovered — the remaining
+# 150+ plugin skills are silently skipped.
 #
 # The skills CLI writes to `<cwd>/.agents/skills/` (universal format). We run
 # the install in a scratch dir, then move the tree under
@@ -57,8 +56,7 @@ RUN su vscode -c '\
         set -eux \
         && mkdir -p /tmp/skills-install \
         && cd /tmp/skills-install \
-        && npx --yes skills add microsoft/skills --all \
-        && npx --yes skills add microsoft/skills --full-depth --skill microsoft-foundry --agent "*" -y \
+        && npx --yes skills add microsoft/skills --full-depth --all --agent "*" -y \
         && mkdir -p /home/vscode/.copilot/skills \
         && cp -r /tmp/skills-install/.agents/skills/. /home/vscode/.copilot/skills/ \
         && rm -rf /tmp/skills-install /home/vscode/.npm \
