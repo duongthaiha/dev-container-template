@@ -63,25 +63,36 @@ Unless the user explicitly changes these constraints, include them as backlog re
 
 Use [Azure POC Guardrails](references/AZURE_POC_GUARDRAILS.md) and [Private Networking Checklist](references/PRIVATE_NETWORKING_CHECKLIST.md) for detailed acceptance criteria.
 
-### 4. Produce a Buildable Backlog
+### 4. Generate Architecture Diagram
+
+Before producing the backlog, create a Mermaid diagram of the proposed system architecture. The diagram should show:
+
+- Key Azure services and their relationships.
+- Data flows between components.
+- Network boundaries (VNet, subnets, private endpoints).
+- User entry points and external integrations.
+
+Present the diagram to the user and **wait for explicit confirmation** that it matches their vision before proceeding. If the user requests changes, revise the diagram and confirm again. Do not move to backlog generation until the architecture is agreed.
+
+### 5. Produce a Buildable Backlog
 
 Structure the backlog as:
 
 1. Product discovery and scope.
-2. User experience and workflow.
-3. Application/API implementation.
+2. Azure infrastructure and deployment.
+3. Private networking and security.
 4. Data and integration.
-5. Azure infrastructure and deployment.
-6. Private networking and security.
+5. User experience and workflow.
+6. Application/API implementation.
 7. Observability and validation.
 8. Deployment and success criteria verification.
-9. POC demo script and guide
-10. Documentation of architecture decisions, workflow diagrams, and operational runbooks.
+9. Documentation of architecture decisions, workflow diagrams, and operational runbooks.
+10. POC demo script and guide.
 
 
 Use the [Backlog Output Template](references/BACKLOG_OUTPUT_TEMPLATE.md). Every story should have clear acceptance criteria and a visible owner type: Product, Engineering, Architecture, Security, Data, or DevOps.
 
-### 5. Separate Decisions from Work
+### 6. Separate Decisions from Work
 
 If a requirement is unresolved, create a decision item instead of hiding the ambiguity inside a story. Examples:
 
@@ -89,7 +100,7 @@ If a requirement is unresolved, create a decision item instead of hiding the amb
 - "Confirm whether private connectivity must support local developer machines, CI runners, or only deployed Azure services."
 - "Confirm whether public ingress is allowed for the app tier or only private access is allowed end-to-end."
 
-### 6. Keep the POC Honest
+### 7. Keep the POC Honest
 
 POC does not mean toy. It means **thin slice with production-shaped bones**. Keep scope small, but include the security and deployment skeleton early so the team does not build a demo that cannot survive enterprise policy.
 
@@ -100,10 +111,11 @@ Default output:
 1. **Assumptions** - Explicit assumptions used to create the backlog.
 2. **Clarifying Questions** - Only if blockers remain.
 3. **POC Goal** - One paragraph.
-4. **Backlog** - Epics and stories with acceptance criteria.
-5. **Architecture Decisions** - Open choices and recommended default.
-6. **Azure Guardrails** - Bicep, `azd`, private endpoint, identity, secrets, and observability requirements.
-7. **Definition of Done** - What proves the POC is complete.
+4. **Architecture Diagram** - Mermaid diagram confirmed by the user.
+5. **Backlog** - Epics and stories with acceptance criteria.
+6. **Architecture Decisions** - Open choices and recommended default.
+7. **Azure Guardrails** - Bicep, `azd`, private endpoint, identity, secrets, and observability requirements.
+8. **Definition of Done** - What proves the POC is complete.
 
 If the user asks for a shorter answer, provide only the backlog table plus the open questions.
 
