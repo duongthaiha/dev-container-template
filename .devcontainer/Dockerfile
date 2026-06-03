@@ -65,18 +65,7 @@ RUN su vscode -c '\
         && rm -rf /tmp/skills-install /home/vscode/.npm \
     '
 
-# Bake the product-backlog-poc-planner skill from duongthaiha/azure-poc.
-# Pinned to `main` intentionally — the weekly no-cache cron picks up the latest
-# version automatically, matching the same refresh cadence as the Microsoft
-# Skills pack above.
-RUN su vscode -c '\
-        set -eux \
-        && SKILL_DIR=/home/vscode/.copilot/skills/product-backlog-poc-planner \
-        && RAW=https://raw.githubusercontent.com/duongthaiha/azure-poc/main/procurement-agent-poc/.copilot/skills/product-backlog-poc-planner \
-        && mkdir -p "$SKILL_DIR/references" \
-        && curl -fsSL "$RAW/SKILL.md" -o "$SKILL_DIR/SKILL.md" \
-        && for f in AZURE_POC_GUARDRAILS.md BACKLOG_OUTPUT_TEMPLATE.md INTAKE_QUESTION_BANK.md PRIVATE_NETWORKING_CHECKLIST.md; do \
-               curl -fsSL "$RAW/references/$f" -o "$SKILL_DIR/references/$f"; \
-           done \
-        && test -s "$SKILL_DIR/SKILL.md" \
-    '
+# Bake the product-backlog-poc-planner skill from the vendored copy in
+# .devcontainer/skills/ (committed in this repo).
+# To update: sync the files from duongthaiha/azure-poc and commit.
+COPY --chown=vscode:vscode skills/product-backlog-poc-planner /home/vscode/.copilot/skills/product-backlog-poc-planner
