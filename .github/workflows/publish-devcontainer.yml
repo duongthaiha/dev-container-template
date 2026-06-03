@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.devcontainer/**'
+      - '.github/skills/**'
       - '.github/workflows/publish-devcontainer.yml'
   schedule:
     - cron: '0 6 * * 1'
@@ -52,7 +53,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          context: .devcontainer
+          context: .
           file: .devcontainer/Dockerfile
           platforms: ${{ matrix.platform }}
           pull: true

@@ -1,6 +1,7 @@
 {
   "name": "Python Azure Dev Container",
   "build": {
+    "context": "..",
     "dockerfile": "Dockerfile"
   },
   "customizations": {

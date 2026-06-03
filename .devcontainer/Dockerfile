@@ -65,7 +65,7 @@ RUN su vscode -c '\
         && rm -rf /tmp/skills-install /home/vscode/.npm \
     '
 
-# Bake the product-backlog-poc-planner skill from the vendored copy in
-# .devcontainer/skills/ (committed in this repo).
-# To update: sync the files from duongthaiha/azure-poc and commit.
-COPY --chown=vscode:vscode skills/product-backlog-poc-planner /home/vscode/.copilot/skills/product-backlog-poc-planner
+# Bake the product-backlog-poc-planner skill from the repo-level
+# .github/skills/ directory (the single source of truth).
+# Installable externally via: npx skills add duongthaiha/dev-container-template
+COPY --chown=vscode:vscode .github/skills/product-backlog-poc-planner /home/vscode/.copilot/skills/product-backlog-poc-planner
