@@ -42,12 +42,13 @@ RUN apt-get update \
 # need for consumers to update their own devcontainer.json.
 # Refreshed on every weekly scheduled rebuild (workflow runs with no-cache).
 #
-# A single `--full-depth --all` pass (run as the vscode user so HOME resolves
-# correctly) installs every skill from `microsoft/skills`, including plugin
-# skills that live under `.github/plugins/*/skills/` (e.g. microsoft-foundry,
-# azure-deploy, azure-prepare, etc.).  Without `--full-depth` only the 19
-# top-level skills under `.github/skills/` are discovered — the remaining
-# 150+ plugin skills are silently skipped.
+# `--full-depth --all` installs every skill from `microsoft/skills`, including
+# plugin skills under `.github/plugins/*/skills/`.  Without `--full-depth`
+# only the ~19 top-level skills are discovered; plugin skills are skipped.
+#
+# After install, non-Python language-specific skills (suffixed -dotnet, -java,
+# -ts, -rust) are pruned — this image targets Python workflows.  Language-
+# agnostic skills (no suffix) are kept for all users.
 #
 # The skills CLI writes to `<cwd>/.agents/skills/` (universal format). We run
 # the install in a scratch dir, then move the tree under
@@ -59,6 +60,8 @@ RUN su vscode -c '\
         && npx --yes skills add microsoft/skills --full-depth --all --agent "*" -y \
         && mkdir -p /home/vscode/.copilot/skills \
         && cp -r /tmp/skills-install/.agents/skills/. /home/vscode/.copilot/skills/ \
+        && cd /home/vscode/.copilot/skills \
+        && for d in *-dotnet *-java *-ts *-rust; do [ -d "$d" ] && rm -rf "$d"; done \
         && rm -rf /tmp/skills-install /home/vscode/.npm \
     '
 
