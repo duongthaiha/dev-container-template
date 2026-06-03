@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Skills CLI local install (image is the source of truth; see .devcontainer/Dockerfile)
+.agents/
+skills-lock.json
