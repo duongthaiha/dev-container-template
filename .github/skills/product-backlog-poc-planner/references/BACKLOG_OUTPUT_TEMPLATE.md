@@ -88,6 +88,8 @@ Expected stories:
 - Add orchestration, agent, or tool-calling behavior only where the scenario needs it.
 - Capture failure states and user-facing recovery behavior.
 
+> **Implementation integrity:** Stories must produce real behavior, not test-passing shortcuts. Do not hardcode expected outputs, stub responses, or special-case known test inputs just to make tests or acceptance criteria go green. Acceptance criteria must assert genuine behavior against realistic and varied inputs (including unseen ones), so a hardcoded answer would fail. If a real implementation is out of POC scope, mark it as an explicit decision or a deferred story rather than faking the result.
+
 ### 7. Observability and Validation
 
 Purpose: prove the POC works and fails visibly.
@@ -97,6 +99,7 @@ Expected stories:
 - Add application logging and correlation IDs.
 - Add deployment validation steps.
 - Add a demo validation script or checklist.
+- Add tests that exercise real behavior against varied and previously unseen inputs, so an implementation that hardcodes outputs for known cases would fail.
 - Capture known limitations and next-phase risks.
 
 ### 8. Deployment and Success Criteria Verification
@@ -136,7 +139,7 @@ Expected stories:
 
 ## Definition of Done
 
-- The POC scenario works end-to-end.
+- The POC scenario works end-to-end against real inputs, with no hardcoded outputs, stubbed responses, or test-input special-casing used to satisfy tests or acceptance criteria.
 - The backlog includes product, engineering, infrastructure, security, and validation work.
 - Infrastructure is represented in Bicep.
 - `azd` can provision and deploy the workload, or a story exists to close that gap.

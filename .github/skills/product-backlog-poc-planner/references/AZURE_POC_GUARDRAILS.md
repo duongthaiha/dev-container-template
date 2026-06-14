@@ -46,6 +46,17 @@ Backlog requirements:
 - Do not put secrets in source, sample backlog output, Bicep parameter files, or `azd` environment files.
 - Add RBAC tasks for each service-to-service dependency.
 
+## Implementation Integrity
+
+The POC must demonstrate real behavior, not a test harness that has been gamed into passing.
+
+Backlog requirements:
+
+- Implement genuine logic that computes results from inputs; do not return hardcoded values, canned responses, or precomputed outputs to satisfy tests or acceptance criteria.
+- Do not special-case known test inputs (for example, branching on a specific id, prompt, or fixture value) to produce the expected answer.
+- Acceptance criteria and tests must use varied and previously unseen inputs so a hardcoded implementation would fail.
+- If a real implementation is genuinely out of POC scope, record it as an architecture decision or a deferred story rather than faking the output. A clearly stubbed dependency is acceptable only when it is explicitly documented as a stub in the story and its acceptance criteria.
+
 ## Region Availability
 - Prefer region that have the most services available 
   

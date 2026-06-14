@@ -59,6 +59,7 @@ Unless the user explicitly changes these constraints, include them as backlog re
 - Infrastructure is authored in **Bicep**.
 - Deployment is supported through **Azure Developer CLI (`azd`)** with `azure.yaml` and an `infra/` folder.
 - Database access is private by design: private endpoint, private DNS, app-to-database private connectivity, and public network access disabled where the selected database service supports it.
+- Implementation produces genuine behavior: no hardcoded outputs, stubbed responses, or special-casing of known test inputs solely to pass tests or acceptance criteria. If real behavior is out of POC scope, capture it as a decision or deferred story instead of faking results.
 - Secrets belong in Key Vault or managed platform configuration; do not put secrets in backlog examples, source code, or `azd` environment files.
 
 Use [Azure POC Guardrails](references/AZURE_POC_GUARDRAILS.md) and [Private Networking Checklist](references/PRIVATE_NETWORKING_CHECKLIST.md) for detailed acceptance criteria.
@@ -128,6 +129,7 @@ If the user asks for a shorter answer, provide only the backlog table plus the o
 | Azure service is unspecified | Database or host not selected | Add an architecture decision and keep private networking acceptance criteria service-neutral |
 | Public database access appears in the idea | Enterprise policy conflict | Add private endpoint, private DNS, app connectivity, and public access disablement stories |
 | Requirements are too broad for a POC | Scope creep | Define a thin end-to-end slice and move nonessential work to "Deferred after POC" |
+| Stories or tests could be satisfied by hardcoding | Test-passing shortcut risk | Require genuine behavior; write acceptance criteria against varied/unseen inputs so hardcoded outputs fail, and mark any unavoidable stub explicitly |
 
 ## References
 
