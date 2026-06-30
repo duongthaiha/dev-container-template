@@ -13,5 +13,8 @@
     }
   },
   "postCreateCommand": "echo \"Microsoft Skills available: $(ls ~/.copilot/skills 2>/dev/null | wc -l) under ~/.copilot/skills/\"",
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway"
+  ]
 }

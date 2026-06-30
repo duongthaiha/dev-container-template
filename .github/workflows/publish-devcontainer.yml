@@ -9,6 +9,11 @@ on:
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:
+    inputs:
+      no_cache:
+        description: 'Build without cache (force-refresh baked tools: copilot, az, azd, bicep, skills)'
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -56,7 +61,7 @@ jobs:
           file: .devcontainer/Dockerfile
           platforms: ${{ matrix.platform }}
           pull: true
-          no-cache: ${{ github.event_name == 'schedule' }}
+          no-cache: ${{ github.event_name == 'schedule' || github.event.inputs.no_cache == 'true' }}
           outputs: type=image,name=${{ steps.img.outputs.name }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=${{ matrix.arch }}
           cache-to: type=gha,scope=${{ matrix.arch }},mode=max

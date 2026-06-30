@@ -1,19 +1,8 @@
 {
-  "name": "Python Azure Dev Container",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-azuretools.vscode-azurecli",
-        "ms-azuretools.azd",
-        "eamodio.gitlens"
-      ]
-    }
-  },
-  "postCreateCommand": "python --version && az --version && azd version && bicep --version && oh-my-posh version && echo \"Microsoft Skills available: $(ls ~/.copilot/skills 2>/dev/null | wc -l) under ~/.copilot/skills/\"",
-  "remoteUser": "vscode"
+  "name": "Python Azure",
+  "image": "ghcr.io/duongthaiha/python-azure-devcontainer:latest",
+  "remoteUser": "vscode",
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway"
+  ]
 }
