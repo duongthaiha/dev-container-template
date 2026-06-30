@@ -13,6 +13,7 @@ Skeleton repository for a Python development container with Azure tooling preins
 - Node.js 22 (`node`, `npm`, `npx`) from NodeSource
 - Oh My Posh (`oh-my-posh`) with global Bash initialization
 - Microsoft Skills pack (`microsoft/skills`) — every top-level skill plus the **Microsoft Foundry plugin** (`microsoft-foundry`) — baked into the image at `~/.copilot/skills/` so Copilot CLI discovers them in any workspace with no extra setup
+- **Product Backlog POC Planner** skill — turns ideas into POC-ready engineering backlogs; baked into the image and also installable standalone (see below)
 
 ## Usage
 
@@ -46,6 +47,18 @@ TL;DR — drop this into `.devcontainer/devcontainer.json` in any other repo and
 ```
 
 The image is public (multi-arch: `linux/amd64` + `linux/arm64`), so no `docker login` is needed.
+
+## Installing skills without the dev container
+
+The **Product Backlog POC Planner** skill is committed at `.github/skills/` and can be installed into any workspace — no container rebuild required:
+
+```bash
+npx skills add duongthaiha/dev-container-template
+```
+
+This downloads the skill into `.agents/skills/` in your current directory, where Copilot CLI and other supported agents discover it automatically.
+
+> **Tip:** If you're already using the dev container image, the skill is pre-baked at `~/.copilot/skills/` — you don't need to install it again.
 
 ## Publishing pipeline (maintainers)
 

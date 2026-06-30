@@ -23,6 +23,7 @@ Once your container starts, the following tooling is preinstalled and on `PATH`:
 | Node.js | `node -v` / `npm -v` | Node.js **22** from NodeSource (required by Copilot CLI) |
 | Oh My Posh | `oh-my-posh version` | Enabled globally for Bash |
 | Microsoft Skills pack | `ls ~/.copilot/skills` | **Baked into the image** at `/home/vscode/.copilot/skills/` (Copilot CLI's personal-skills path) — discovered automatically in any workspace, no network at container start, no consumer `postCreateCommand` changes required. Includes every top-level skill from `microsoft/skills` **plus the [`microsoft-foundry`](https://microsoft.github.io/skills/#plugin=microsoft-foundry) plugin** (Foundry router + 10 sub-skills). Refreshed every Monday by the publish workflow. |
+| Product Backlog POC Planner | `ls ~/.copilot/skills/product-backlog-poc-planner` | Turns ideas into POC-ready engineering backlogs with Azure guardrails. **Baked into the image** and also installable standalone via `npx skills add duongthaiha/dev-container-template` (see [Installing skills without the container](#installing-skills-without-the-container)). |
 
 User inside the container: **`vscode`** (non-root, passwordless `sudo`).
 
@@ -215,3 +216,31 @@ If your repo is **private**, ensure the GHCR package is also reachable: this ima
 ## Reporting issues / contributing
 
 File issues at <https://github.com/duongthaiha/dev-container-template/issues>. If you're adding tooling that should belong in the base image (not your repo), open a PR against the source repo's [.devcontainer/Dockerfile](.devcontainer/Dockerfile).
+
+---
+
+## Installing skills without the container
+
+The **Product Backlog POC Planner** skill lives at [`.github/skills/`](.github/skills/) in this repo. You can install it into any workspace without using the dev container:
+
+```bash
+npx skills add duongthaiha/dev-container-template
+```
+
+This places the skill under `.agents/skills/product-backlog-poc-planner/` in your current directory. Copilot CLI, Claude Code, Cursor, Codex, and other supported agents discover it automatically.
+
+### What the skill does
+
+Turns a fuzzy product idea into a buildable POC backlog with:
+
+- Intake questions to clarify scope
+- A Mermaid architecture diagram (confirmed with the user before proceeding)
+- Sequenced epics optimized for incremental dev delivery (infra → data → app)
+- Azure guardrails (Bicep, `azd`, private endpoints, managed identity)
+- Acceptance criteria, owner types, and a Definition of Done
+
+Invoke it in Copilot CLI by mentioning keywords like *"product backlog"*, *"POC backlog"*, *"MVP planning"*, or *"engineering stories"*.
+
+### Updating
+
+If you installed via `npx skills add`, re-run the same command to pull the latest version. If you're using the dev container image, the skill is refreshed on every weekly rebuild.
