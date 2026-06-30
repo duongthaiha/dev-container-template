@@ -58,9 +58,20 @@ Expected stories:
 - Disable public network access where supported by the selected database service.
 - Add managed identity and RBAC stories for service-to-service access.
 
-### 4. Data and Integration
+### 4. API Contracts and Mocks
 
-Purpose: connect the POC to real enough data without pretending the integration problem is solved. Runs against live infra from Epic 2–3.
+Purpose: lock the interface of **every API/service** in the system before any of them are fully built, so each consumer (frontend or another service) can progress against a stable contract and a mock while the real implementations are still in flight. Establish contracts right after the environment and networking foundation.
+
+Expected stories:
+
+- Inventory every API/service in the system and define an explicit, versioned contract for **each** (e.g. OpenAPI/Swagger for REST, schema for GraphQL/gRPC); commit each contract as the shared source of truth for that API.
+- Implement a mock for **each** API that serves contract-valid, varied responses (including error and edge-case responses), not a single hardcoded payload.
+- Provide a per-API configuration toggle (e.g. environment variable or build flag) so each consumer can target the mock or the true implementation of each upstream API independently, without code changes.
+- Add contract validation/tests so each mock and its real API are both verified against the same contract and cannot drift, including service-to-service contracts.
+
+### 5. Data and Integration
+
+Purpose: connect the POC to real enough data without pretending the integration problem is solved. Runs against live infra from Epic 2–3 and fulfills the contracts from Epic 4.
 
 Expected stories:
 
@@ -68,19 +79,20 @@ Expected stories:
 - Implement read paths and any required write/action paths.
 - Add test data and data refresh expectations.
 
-### 5. User Experience and Workflow
+### 6. User Experience and Workflow
 
-Purpose: define what the user sees, does, approves, and trusts. Finalize UX design before application implementation begins.
+Purpose: define what the user sees, does, approves, and trusts. Finalize UX design before application implementation begins. Consumers (the frontend and any calling service) are built against the API contracts and can run against the mock or true implementation per API.
 
 Expected stories:
 
 - Map the current workflow and future POC workflow.
 - Define conversation, UI, API, or autonomous behavior.
+- Build each consumer against the committed API contracts, defaulting to the mocks and switchable to the true implementation per API via the configuration toggle.
 - Define human approval and exception paths.
 
-### 6. Application/API Implementation
+### 7. Application/API Implementation
 
-Purpose: implement the core product behavior on top of the infrastructure, data, and UX foundations from Epics 2–5.
+Purpose: implement the core product behavior on top of the infrastructure, data, contracts, and UX foundations from Epics 2–6. Each real API must satisfy the same contract its mock implements.
 
 Expected stories:
 
@@ -90,7 +102,7 @@ Expected stories:
 
 > **Implementation integrity:** Stories must produce real behavior, not test-passing shortcuts. Do not hardcode expected outputs, stub responses, or special-case known test inputs just to make tests or acceptance criteria go green. Acceptance criteria must assert genuine behavior against realistic and varied inputs (including unseen ones), so a hardcoded answer would fail. If a real implementation is out of POC scope, mark it as an explicit decision or a deferred story rather than faking the result.
 
-### 7. Observability and Validation
+### 8. Observability and Validation
 
 Purpose: prove the POC works and fails visibly.
 
@@ -102,7 +114,7 @@ Expected stories:
 - Add tests that exercise real behavior against varied and previously unseen inputs, so an implementation that hardcodes outputs for known cases would fail.
 - Capture known limitations and next-phase risks.
 
-### 8. Deployment and Success Criteria Verification
+### 9. Deployment and Success Criteria Verification
 
 Purpose: prove the deployed POC actually meets the agreed success criteria.
 
@@ -113,7 +125,7 @@ Expected stories:
 - Verify each POC success criterion against the deployed system, not a local build.
 - Validate private connectivity from the deployed host, not a developer machine.
 
-### 9. Documentation of Architecture Decisions, Workflow Diagrams, and Operational Runbooks
+### 10. Documentation of Architecture Decisions, Workflow Diagrams, and Operational Runbooks
 
 Purpose: make the POC buildable by the next team and operable in production-shaped form. Capture decisions while they are fresh, before demo preparation.
 
@@ -125,7 +137,7 @@ Expected stories:
 - Document what must change before production.
 - Any lesson learnt from fixing issue during deployment and testing.
 
-### 10. POC Demo Script and Guide
+### 11. POC Demo Script and Guide
 
 Purpose: make the POC demonstrable on demand by any presenter. Final epic — everything it references is already built and documented.
 
@@ -144,6 +156,7 @@ Expected stories:
 - Infrastructure is represented in Bicep.
 - `azd` can provision and deploy the workload, or a story exists to close that gap.
 - Database networking uses private endpoint/private DNS design, with public access disabled where supported.
+- Every API/service has its own committed, versioned contract; each API ships a mock serving contract-valid responses; and every consumer can switch between mock and true implementation per API via configuration without code changes.
 - Deployment is verified and each POC success criterion is checked against the deployed system.
 - A demo script and an operational runbook are documented, with architecture decisions and workflow diagrams committed.
 - Open decisions are explicit and assigned.

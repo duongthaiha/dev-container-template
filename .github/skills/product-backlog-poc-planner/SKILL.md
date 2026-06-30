@@ -59,7 +59,10 @@ Unless the user explicitly changes these constraints, include them as backlog re
 - Infrastructure is authored in **Bicep**.
 - Deployment is supported through **Azure Developer CLI (`azd`)** with `azure.yaml` and an `infra/` folder.
 - Database access is private by design: private endpoint, private DNS, app-to-database private connectivity, and public network access disabled where the selected database service supports it.
-- Implementation produces genuine behavior: no hardcoded outputs, stubbed responses, or special-casing of known test inputs solely to pass tests or acceptance criteria. If real behavior is out of POC scope, capture it as a decision or deferred story instead of faking results.
+- APIs are **contract-first**: the system may contain multiple APIs/services, and **each one has its own explicit, versioned contract** (e.g. OpenAPI/Swagger for REST, schema for GraphQL/gRPC). Each contract is the shared source of truth between that API and its consumers (a frontend, another service, or an external client).
+- Each API exposes a **mock implementation** of its own contract, so any consumer can be built, tested, and demoed independently of the real API and of the other services.
+- Every consumer can switch between the **mock and the true implementation per API** via configuration (e.g. an environment variable or build flag) without code changes, so a service can run, for example, against a real upstream API while a still-unbuilt downstream API is mocked.
+- Implementation produces genuine behavior: no hardcoded outputs, stubbed responses, or special-casing of known test inputs solely to pass tests or acceptance criteria. The per-API mocks are the single allowed exception, and each must serve contract-valid, varied data behind an explicit toggle — never silent hardcoding in production paths. If real behavior is out of POC scope, capture it as a decision or deferred story instead of faking results.
 - Secrets belong in Key Vault or managed platform configuration; do not put secrets in backlog examples, source code, or `azd` environment files.
 
 Use [Azure POC Guardrails](references/AZURE_POC_GUARDRAILS.md) and [Private Networking Checklist](references/PRIVATE_NETWORKING_CHECKLIST.md) for detailed acceptance criteria.
@@ -82,13 +85,14 @@ Structure the backlog as:
 1. Product discovery and scope.
 2. Azure infrastructure and deployment.
 3. Private networking and security.
-4. Data and integration.
-5. User experience and workflow.
-6. Application/API implementation.
-7. Observability and validation.
-8. Deployment and success criteria verification.
-9. Documentation of architecture decisions, workflow diagrams, and operational runbooks.
-10. POC demo script and guide.
+4. API contracts and mocks (one contract + mock per API/service).
+5. Data and integration.
+6. User experience and workflow (consumers wired to mock or true APIs).
+7. Application/API implementation.
+8. Observability and validation.
+9. Deployment and success criteria verification.
+10. Documentation of architecture decisions, workflow diagrams, and operational runbooks.
+11. POC demo script and guide.
 
 
 Use the [Backlog Output Template](references/BACKLOG_OUTPUT_TEMPLATE.md). Every story should have clear acceptance criteria and a visible owner type: Product, Engineering, Architecture, Security, Data, or DevOps.
