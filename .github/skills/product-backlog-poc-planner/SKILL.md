@@ -78,7 +78,23 @@ Before producing the backlog, create a Mermaid diagram of the proposed system ar
 
 Present the diagram to the user and **wait for explicit confirmation** that it matches their vision before proceeding. If the user requests changes, revise the diagram and confirm again. Do not move to backlog generation until the architecture is agreed.
 
-### 5. Produce a Buildable Backlog
+### 5. Define Functional and Non-Functional Requirements
+
+After the architecture is confirmed, derive the requirements that will be the source of the backlog:
+
+- Use intake answers, assumptions, the confirmed architecture, success criteria, and engineering guardrails.
+- Create functional requirements with stable `FR-###` identifiers using the [Functional Requirements Template](references/FUNCTIONAL_REQUIREMENTS_TEMPLATE.md).
+- Create non-functional requirements with stable `NFR-###` identifiers using the [Non-Functional Requirements Template](references/NON_FUNCTIONAL_REQUIREMENTS_TEMPLATE.md).
+- Keep functional requirements focused on observable user or system behavior.
+- Make non-functional requirements measurable by including a target or mandatory constraint and a validation method.
+- Do not invent missing behavior, thresholds, or policy. Keep unresolved items as clarifying questions or decision items.
+- Present functional and non-functional requirements as dedicated output sections before the backlog.
+
+Present the requirements to the user and **wait for explicit confirmation** that they describe the intended product behavior and quality constraints. Revise them if needed. Do not generate the backlog until the requirements are confirmed, unless the user explicitly asks to proceed with documented assumptions and decision items.
+
+### 6. Produce a Buildable Backlog
+
+Generate the backlog from the functional and non-functional requirements. Each implementation or validation story must reference the `FR-###` and/or `NFR-###` identifiers it implements or verifies.
 
 Structure the backlog as:
 
@@ -95,9 +111,11 @@ Structure the backlog as:
 11. POC demo script and guide.
 
 
-Use the [Backlog Output Template](references/BACKLOG_OUTPUT_TEMPLATE.md). Every story should have clear acceptance criteria and a visible owner type: Product, Engineering, Architecture, Security, Data, or DevOps.
+Use the [Backlog Output Template](references/BACKLOG_OUTPUT_TEMPLATE.md). Every story should have clear acceptance criteria, referenced requirement IDs, and a visible owner type: Product, Engineering, Architecture, Security, Data, or DevOps.
 
-### 6. Separate Decisions from Work
+Architecture, discovery, and decision work that does not directly implement a confirmed requirement must be explicitly labeled as an `ENABLER` or `DECISION`. After creating the backlog, produce a requirements traceability matrix that maps every `FR-###` and `NFR-###` to one or more stories, an owned decision, or an explicit deferral. Revise the backlog if any confirmed requirement is uncovered.
+
+### 7. Separate Decisions from Work
 
 If a requirement is unresolved, create a decision item instead of hiding the ambiguity inside a story. Examples:
 
@@ -105,7 +123,7 @@ If a requirement is unresolved, create a decision item instead of hiding the amb
 - "Confirm whether private connectivity must support local developer machines, CI runners, or only deployed Azure services."
 - "Confirm whether public ingress is allowed for the app tier or only private access is allowed end-to-end."
 
-### 7. Keep the POC Honest
+### 8. Keep the POC Honest
 
 POC does not mean toy. It means **thin slice with production-shaped bones**. Keep scope small, but include the security and deployment skeleton early so the team does not build a demo that cannot survive enterprise policy.
 
@@ -117,12 +135,15 @@ Default output:
 2. **Clarifying Questions** - Only if blockers remain.
 3. **POC Goal** - One paragraph.
 4. **Architecture Diagram** - Mermaid diagram confirmed by the user.
-5. **Backlog** - Epics and stories with acceptance criteria.
-6. **Architecture Decisions** - Open choices and recommended default.
-7. **Azure Guardrails** - Bicep, `azd`, private endpoint, identity, secrets, and observability requirements.
-8. **Definition of Done** - What proves the POC is complete.
+5. **Functional Requirements** - Observable behavior with stable `FR-###` identifiers.
+6. **Non-Functional Requirements** - Measurable quality targets and constraints with stable `NFR-###` identifiers.
+7. **Backlog** - Epics and stories with acceptance criteria and requirement IDs.
+8. **Requirements Traceability** - Mapping from every requirement to stories, decisions, or explicit deferrals.
+9. **Architecture Decisions** - Open choices and recommended default.
+10. **Azure Guardrails** - Bicep, `azd`, private endpoint, identity, secrets, and observability requirements.
+11. **Definition of Done** - What proves the POC is complete.
 
-If the user asks for a shorter answer, provide only the backlog table plus the open questions.
+If the user asks for a shorter answer, provide the requirement tables, backlog table, traceability matrix, and open questions.
 
 ## Error Handling
 
@@ -134,12 +155,18 @@ If the user asks for a shorter answer, provide only the backlog table plus the o
 | Public database access appears in the idea | Enterprise policy conflict | Add private endpoint, private DNS, app connectivity, and public access disablement stories |
 | Requirements are too broad for a POC | Scope creep | Define a thin end-to-end slice and move nonessential work to "Deferred after POC" |
 | Stories or tests could be satisfied by hardcoding | Test-passing shortcut risk | Require genuine behavior; write acceptance criteria against varied/unseen inputs so hardcoded outputs fail, and mark any unavoidable stub explicitly |
+| Functional requirement is ambiguous or combines multiple behaviors | Discovery is incomplete | Split it into atomic `FR-###` requirements and keep unresolved behavior as a question or decision |
+| Non-functional requirement says only "fast," "secure," or "scalable" | Target and measurement are missing | Add a measurable threshold and validation method, or create a decision item to define them |
+| Backlog story has no requirement reference | Story was invented from the epic structure instead of the requirements | Link it to applicable `FR-###` or `NFR-###`, or label it as an `ENABLER` or `DECISION` |
+| Requirement has no backlog coverage | Traceability gap | Add or revise stories, assign an owned decision, or explicitly defer the requirement before finalizing |
 
 ## References
 
 | Reference | Use When |
 |---|---|
 | [Intake Question Bank](references/INTAKE_QUESTION_BANK.md) | Requirements are vague or the idea needs discovery |
+| [Functional Requirements Template](references/FUNCTIONAL_REQUIREMENTS_TEMPLATE.md) | Defining observable behavior before backlog generation |
+| [Non-Functional Requirements Template](references/NON_FUNCTIONAL_REQUIREMENTS_TEMPLATE.md) | Defining measurable quality attributes and constraints |
 | [Backlog Output Template](references/BACKLOG_OUTPUT_TEMPLATE.md) | Producing epics, stories, acceptance criteria, and DoD |
 | [Azure POC Guardrails](references/AZURE_POC_GUARDRAILS.md) | Adding Bicep, `azd`, identity, deployment, and validation requirements |
 | [Private Networking Checklist](references/PRIVATE_NETWORKING_CHECKLIST.md) | Adding private endpoint and database public access constraints |
@@ -152,7 +179,10 @@ After completing a backlog, silently check whether the skill missed any repeatab
 2. Did an Azure networking or deployment constraint arrive late?
 3. Were acceptance criteria too vague for engineering execution?
 4. Did a new reusable question or checklist item emerge?
-5. Generate architecture diagram and confirmed with the user that it matches their vision?
+5. Was the architecture diagram generated and confirmed with the user?
+6. Were any requirements ambiguous, unmeasurable, duplicated, or missing?
+7. Did every backlog story reference requirements or identify itself as an enabler or decision?
+8. Did the traceability matrix expose any orphaned requirement or uncovered backlog work?
 
 
 If yes, suggest a targeted update to this skill or one of its references.

@@ -12,15 +12,33 @@ Use this template when producing the final backlog.
 
 One paragraph that explains the thin slice. Keep it outcome-first: user, workflow, proof, and constraint.
 
+## Functional Requirements
+
+Use [Functional Requirements Template](FUNCTIONAL_REQUIREMENTS_TEMPLATE.md). Assign stable `FR-###` identifiers and define the observable behavior the POC must provide.
+
+| ID | Capability | Actor | Trigger | Required Behavior | Inputs | Outputs | Business Rules | Priority | Acceptance Evidence | Dependencies | Status / Open Decision |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| FR-001 | `<capability>` | `<user, system, or service>` | `<event that starts the behavior>` | `<observable behavior>` | `<input or precondition>` | `<result or state change>` | `<validation, authorization, approval, or processing rules>` | Must/Should/Could | `<demo or test proof>` | `<requirement, integration, or decision>` | Confirmed/Open/Deferred |
+
+## Non-Functional Requirements
+
+Use [Non-Functional Requirements Template](NON_FUNCTIONAL_REQUIREMENTS_TEMPLATE.md). Assign stable `NFR-###` identifiers and make every target measurable or explicitly mandatory.
+
+| ID | Quality Attribute | Scope | Target / Threshold | Measurement Method | Priority | Rationale | Dependencies | Status / Open Decision |
+|---|---|---|---|---|---|---|---|---|
+| NFR-001 | `<quality attribute>` | `<workflow, component, or environment>` | `<measurable target or constraint>` | `<test, metric, audit, or evidence>` | Must/Should/Could | `<why it matters>` | `<service, requirement, policy, or decision>` | Confirmed/Open/Deferred |
+
 ## Epic Template
 
 ### Epic: `<name>`
 
 **Goal:** What this epic proves or enables.
 
-| Story | Owner Type | Acceptance Criteria | Notes |
-|---|---|---|---|
-| As a `<user>`, I want `<capability>` so that `<outcome>` | Product/Engineering/Architecture/Security/Data/DevOps | Given/When/Then or checklist criteria | Dependencies, risks, or decisions |
+| Story ID | Story | Requirement IDs | Owner Type | Acceptance Criteria | Notes |
+|---|---|---|---|---|---|
+| US-001 | As a `<user>`, I want `<capability>` so that `<outcome>` | FR-001, NFR-001 | Product/Engineering/Architecture/Security/Data/DevOps | Given/When/Then or checklist criteria | Dependencies, risks, or decisions |
+
+Every implementation or validation story must reference at least one `FR-###` or `NFR-###`. Architecture, discovery, and decision work that does not implement a confirmed requirement must be explicitly labeled `ENABLER` or `DECISION` in the Requirement IDs column.
 
 ## Required Epic Set
 
@@ -34,6 +52,7 @@ Expected stories:
 
 - Define POC success criteria and non-goals.
 - Identify primary users and top workflows.
+- Confirm the functional and non-functional requirements that the backlog will implement.
 - Confirm demo scenario and stakeholder signoff.
 
 ### 2. Azure Infrastructure and Deployment
@@ -148,10 +167,30 @@ Expected stories:
 - Capture expected outputs so a presenter can spot a broken demo.
 
 
+## Requirements Traceability Matrix
+
+Use this matrix after generating the backlog. Every requirement must map to implementation, validation, an explicit decision, or a documented deferral.
+
+| Requirement ID | Requirement Summary | Backlog Story IDs | Coverage Status | Validation Evidence / Notes |
+|---|---|---|---|---|
+| FR-001 | `<functional behavior>` | US-001, US-004 | Covered/Decision/Deferred/Gap | `<how coverage will be proven>` |
+| NFR-001 | `<quality target or constraint>` | US-003, US-009 | Covered/Decision/Deferred/Gap | `<measurement or validation>` |
+
+Coverage rules:
+
+- No confirmed `FR-###` or `NFR-###` may remain unmapped.
+- No implementation or validation story may reference a requirement that is absent from the requirements sections.
+- `Decision` and `Deferred` entries must identify an owner and next action in the backlog.
+- Any `Gap` means the backlog is incomplete and must be revised before finalization.
+
 
 ## Definition of Done
 
 - The POC scenario works end-to-end against real inputs, with no hardcoded outputs, stubbed responses, or test-input special-casing used to satisfy tests or acceptance criteria.
+- Functional and non-functional requirements are documented with stable `FR-###` and `NFR-###` identifiers.
+- Functional requirements define observable behavior and non-functional requirements define measurable targets or mandatory constraints.
+- Every implementation and validation story references at least one requirement; non-requirement work is explicitly labeled as an enabler or decision.
+- The traceability matrix maps every requirement to backlog stories, an owned decision, or an explicit deferral, with no remaining gaps.
 - The backlog includes product, engineering, infrastructure, security, and validation work.
 - Infrastructure is represented in Bicep.
 - `azd` can provision and deploy the workload, or a story exists to close that gap.
